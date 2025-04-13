@@ -2,11 +2,11 @@ module Main where
 
 import Prelude
 
-import Data.Generic.Rep (class Generic)
-import Data.Newtype (class Newtype, over2)
+import Data.Generic.Rep  (class Generic)
+import Data.Newtype      (class Newtype, over2)
 import Data.Show.Generic (genericShow)
-import Effect (Effect)
-import Effect.Console (logShow)
+import Effect            (Effect)
+import Effect.Console    (logShow)
 
 newtype Point
     = Point
@@ -65,4 +65,5 @@ instance Show Shape where
 
 main :: Effect Unit
 main = do
-  logShow origin
+    logShow origin
+    logShow (Circle origin 10.0)
