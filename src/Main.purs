@@ -2,11 +2,13 @@ module Main where
 
 import Prelude
 
-import Data.Generic.Rep  (class Generic)
-import Data.Newtype      (class Newtype, over2)
+import Data.Bounded (Ordering(..))
+import Data.Foldable (class Foldable)
+import Data.Generic.Rep (class Generic)
+import Data.Newtype (class Newtype, over2)
 import Data.Show.Generic (genericShow)
-import Effect            (Effect)
-import Effect.Console    (logShow)
+import Effect (Effect)
+import Effect.Console (logShow)
 
 newtype Point
     = Point
@@ -62,6 +64,33 @@ derive instance Generic Shape _
 
 instance Show Shape where
     show = genericShow
+
+--- Non Empty Array ---
+data NonEmpty a = NonEmpty a (Array a)
+
+derive instance Eq a => Eq (NonEmpty a)
+
+instance Semigroup (NonEmpty a) where
+    append (NonEmpty a arr) (NonEmpty b brr) =
+        NonEmpty a (append arr (append [b] brr))
+
+instance Functor NonEmpty where
+    map f (NonEmpty a arr) =
+        NonEmpty (f a) (map f arr)
+
+instance Foldable NonEmpty
+
+--- Infinite from Ord ---
+data Extended a = Infinite | Finite a
+
+derive instance Eq a => Eq (Extended a)
+
+instance Ord a => Ord (Extended a) where
+    compare Infinite Infinite     = EQ
+    compare Infinite _            = GT
+
+    compare (Finite a) (Finite b) = compare a b
+    compare (Finite _) Infinite   = LT
 
 main :: Effect Unit
 main = do
