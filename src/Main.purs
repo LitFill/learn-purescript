@@ -94,6 +94,14 @@ instance Ord a => Ord (Extended a) where
     compare (Finite a) (Finite b) = compare a b
     compare (Finite _) Infinite   = LT
 
+--- One More Container ---
+data OneMore f a = OneMore a (f a)
+
+instance Foldable f => Foldable (OneMore f) where
+    foldl f i (OneMore a as) = f (foldl f i as) a
+    foldr f i (OneMore a as) = f a (foldr f i as)
+    foldMap f (OneMore a as) = f a <> foldMap f as
+
 main :: Effect Unit
 main = do
     logShow origin
