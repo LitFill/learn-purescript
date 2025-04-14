@@ -12,7 +12,13 @@ to generate this file without the comments in this block.
 -}
 { name = "learn-purescript-litfill"
 , dependencies =
-  [ "console", "effect", "foldable-traversable", "newtype", "prelude" ]
+  [ "arrays"
+  , "console"
+  , "effect"
+  , "foldable-traversable"
+  , "newtype"
+  , "prelude"
+  ]
 , packages = ./packages.dhall
 , sources = [ "src/**/*.purs", "test/**/*.purs" ]
 }

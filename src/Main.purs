@@ -2,6 +2,7 @@ module Main where
 
 import Prelude
 
+import Data.Array (nub, nubEq)
 import Data.Foldable (class Foldable, foldMap, foldl, foldr)
 import Data.Generic.Rep (class Generic)
 import Data.Newtype (class Newtype, over2)
@@ -17,6 +18,7 @@ newtype Point
 
 derive instance Newtype Point _
 derive instance Eq      Point
+derive instance Ord     Point
 
 instance Show Point where
     show (Point {x, y}) =
@@ -60,9 +62,17 @@ data Shape
     | Text      Point String
 
 derive instance Generic Shape _
+derive instance Eq      Shape
+derive instance Ord     Shape
 
 instance Show Shape where
     show = genericShow
+
+dedupShapes :: Array Shape -> Array Shape
+dedupShapes = nubEq
+
+dedupShapesFast :: Array Shape -> Array Shape
+dedupShapesFast = nub
 
 --- Non Empty Array ---
 data NonEmpty a = NonEmpty a (Array a)
