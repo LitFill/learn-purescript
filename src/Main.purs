@@ -2,8 +2,7 @@ module Main where
 
 import Prelude
 
-import Data.Bounded (Ordering(..))
-import Data.Foldable (class Foldable)
+import Data.Foldable (class Foldable, foldMap, foldl, foldr)
 import Data.Generic.Rep (class Generic)
 import Data.Newtype (class Newtype, over2)
 import Data.Show.Generic (genericShow)
@@ -78,7 +77,10 @@ instance Functor NonEmpty where
     map f (NonEmpty a arr) =
         NonEmpty (f a) (map f arr)
 
-instance Foldable NonEmpty
+instance Foldable NonEmpty where
+    foldl f i (NonEmpty a arr) = f (foldl f i arr) a
+    foldr f i (NonEmpty a arr) = f a (foldr f i arr)
+    foldMap f (NonEmpty a arr) = f a <> foldMap f arr
 
 --- Infinite from Ord ---
 data Extended a = Infinite | Finite a
