@@ -1,7 +1,9 @@
 module Main where
 
 import Prelude
+import Hash
 
+import Data.Monoid (power)
 import Data.Array (nub, nubEq)
 import Data.Foldable (class Foldable, foldMap, foldl, foldr, maximum)
 import Data.Generic.Rep (class Generic)
@@ -117,7 +119,41 @@ instance Foldable f => Foldable (OneMore f) where
 unsafeMaximum :: Partial => Array Int -> Int
 unsafeMaximum xs =
     case maximum xs of Just n -> n
+
+--- Action Class ---
+class Monoid m <= Action m a where
+    act :: m -> a -> a
+--| Law:
+-- act mempty     a ≡ a
+-- act (m1 <> m2) a ≡ act m1 (act m2 a)
+
+newtype Multiply = Multiply Int
+
+derive instance Eq Multiply
+
+instance Semigroup Multiply where
+    append (Multiply n) (Multiply m) =
+        Multiply (n * m)
+
+instance Monoid Multiply where
+    mempty = Multiply 1
+
+instance Action Multiply Int where
+    act (Multiply n) a = n * a
+
+instance Action Multiply String where
+    act (Multiply n) s = power s n
+
+instance Action m a => Action m (Array a) where
+    act m = map (act m)
+
+newtype Self m = Self m
+
+instance Monoid m => Action m (Self m) where
+    act m (Self n) = Self (m <> n)
+
 main :: Effect Unit
 main = do
     logShow origin
     logShow (Circle origin 10.0)
+    logShow (hash "1")
