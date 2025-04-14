@@ -3,8 +3,9 @@ module Main where
 import Prelude
 
 import Data.Array (nub, nubEq)
-import Data.Foldable (class Foldable, foldMap, foldl, foldr)
+import Data.Foldable (class Foldable, foldMap, foldl, foldr, maximum)
 import Data.Generic.Rep (class Generic)
+import Data.Maybe (Maybe(..))
 import Data.Newtype (class Newtype, over2)
 import Data.Show.Generic (genericShow)
 import Effect (Effect)
@@ -112,6 +113,10 @@ instance Foldable f => Foldable (OneMore f) where
     foldr f i (OneMore a as) = f a (foldr f i as)
     foldMap f (OneMore a as) = f a <> foldMap f as
 
+--- Unsafe Maximum ---
+unsafeMaximum :: Partial => Array Int -> Int
+unsafeMaximum xs =
+    case maximum xs of Just n -> n
 main :: Effect Unit
 main = do
     logShow origin
